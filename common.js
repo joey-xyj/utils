@@ -136,3 +136,77 @@ export function ssSet (key, val) {
         return false
     }
 }
+
+/**
+ * 防抖函数 - 最后一次调用时触发
+ * @param {Function} fn 原始函数
+ * @param {number} delaytime 延迟时间
+ * @return {Function}
+ */
+export function debounce (fn, delaytime) {
+    let timer = null;
+    return (...args) => {
+        timer && clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn(...args);
+        }, delaytime);
+    }
+}
+
+/**
+ * 防抖 进阶版
+ * @param {Function} fn 原始函数
+ * @param {number} delaytime 等待事件(ms)，
+ * @param {number} overtime 
+ * @return {Function}
+ */
+export function debounce_advance (fn, delaytime, overtime) {
+    let previous = null;
+    let timer = null;
+    return (...args) => {
+        let now = +new Date();
+        if (!previous) {
+            previous = now;
+        }
+
+        if (now - previous > overtime) {
+            timer && clearTimeout(timer);
+            previous = now;
+            return new Promise(resolve => {
+                resolve(fn(...args));
+            })
+        } else {
+            timer && clearTimeout(timer);
+            return new Promise(resolve => {
+                timer = setTimeout(() => {
+                    resolve(fn(...args));
+                }, delaytime);
+            });
+        }
+    }
+    
+}
+
+/**
+ * 节流 - 在一段时间内只能执行一次
+ * @param {Function} fn 原始函数
+ * @param {number} delay  延时时间
+ * @return {Function}
+ */
+export function throttle(fn, delay) {
+    let last_time;
+    let timer = null;
+    return (...args) => {
+        let now = +new Date();
+        if (last_time && now < last_time + delay) { // 还在当前时间
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                fn(...args);
+                last_time = now;
+            }, delay);
+        } else {
+            last_time = now;
+            fn();
+        } 
+    }
+}
