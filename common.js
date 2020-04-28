@@ -210,3 +210,22 @@ export function throttle(fn, delay) {
         } 
     }
 }
+
+/**
+ * 深度拷贝对象
+ * @param {Object} sourece 拷贝源对象
+ * @param {Object} target 目标对象
+ */
+export function deepCopy(sourece, target) {
+    target = target || {}
+    for (let item in sourece) {
+        if (typeof sourece[item] === 'object' && typeof sourece[item] !== null) {
+            target[item] = (sourece[item].constructor === Array) ? [] : {};
+            deepCopy(sourece[item], target[item]);
+        } else {
+            target[item] = sourece[item];
+        }
+    }
+    return target;
+}
+
